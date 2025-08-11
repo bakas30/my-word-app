@@ -25,16 +25,21 @@ jobs:
       - name: Build app
         run: |
           if [ "${{ runner.os }}" = "macOS" ]; then
-            npx electron-builder --mac dmg
+            npx electron-builder --mac dmg -p never
           else
-            npx electron-builder --win nsis
+            npx electron-builder --win nsis -p never
+          fi
+
+      - name: Rename output for clarity
+        run: |
+          if [ "${{ runner.os }}" = "macOS" ]; then
+            mv dist/*.dmg dist/MyWordApp-macOS.dmg
+          else
+            mv dist/*.exe dist/MyWordApp-Windows.exe
           fi
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ runner.os }}-App
-          path: |
-            dist/*.dmg
-            dist/*.exe
-
+          name: ${{ runner.os }}-MyWordApp
+          path: dist/*
